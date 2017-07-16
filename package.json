@@ -1,7 +1,7 @@
 {
-  "name": "rolayjs",
+  "name": "nolayjs",
   "version": "1.0.0",
-  "description": "A boilerplate node, babel and mocha.",
+  "description": "A graphql API layer for relay.",
   "main": "lib/index.js",
   "scripts": {
     "start": "node lib/index.js",
@@ -19,7 +19,7 @@
     "api",
     "layout"
   ],
-  "author": "snapiz",
+  "author": "Jonathan Lapiquonne <jonathan.lapiquonne@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/snapiz/nolayjs/issues"
