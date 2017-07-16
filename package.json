@@ -1,5 +1,5 @@
 {
-  "name": "rolayjs",
+  "name": "nolayjs",
   "version": "1.0.0",
   "description": "A graphql API layer for relay.",
   "main": "lib/index.js",
