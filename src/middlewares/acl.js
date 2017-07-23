@@ -2,6 +2,10 @@ import { merge, isArray, isString } from "lodash";
 
 export function configure(app) {
   const { sequelize: { models }, acl, policies } = app.get("options");
+
+  if(!acl || !models) {
+    return;
+  }
   
   Object.keys(models).forEach(function (m) {
     const mAcl = acl[m];
