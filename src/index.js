@@ -4,27 +4,23 @@ import helmet from "helmet";
 import compress from "compression";
 import bodyParser from "body-parser";
 import { merge } from "lodash";
-import * as GraphQL from "graphql";
-import Sequelize from "sequelize";
-import {
-  createSequelizeGraphqlSchema,
-  graphqlExpress,
-  graphiqlExpress,
-  sequelizeGraphQLObjectTypes
-} from "relay-sequelize";
-
-import { createSequelize } from "./database";;
 
 export default function (options) {
   options = merge({
     middlewares: [],
+    _middlewares: {
+      sync: [],
+      load: []
+    },
     graphql: {
       url: "/graphql",
       browser: false
     },
     sequelize: {
       database: {
-        logging: false
+        logging: false,
+        dialect: "sqlite",
+        storage: "./db.sqlite"
       },
       sync: {
         force: false
@@ -40,59 +36,29 @@ export default function (options) {
     .use(bodyParser.urlencoded({ extended: true }))
     .set('options', options);
 
+  options.middlewares = [
+    require("./middlewares/acl"),
+    require("./middlewares/user"),
+    ...options.middlewares,
+    require("./middlewares/sequelize"),
+    require("./middlewares/graphql")
+  ];
+
   options.middlewares.forEach(function (middleware) {
-    if (middleware.configure) {
-      middleware.configure(app);
+    if(middleware.defaultOptions) {
+      options = merge(options, middleware.defaultOptions);
     }
   });
 
-  app.set('sequelize', createSequelize(app));
+  options.middlewares.forEach(function (middleware) {
+    middleware.configure(app);
+  });
 
   app.start = function () {
-    return app.get('sequelize').sync(options.sequelize.sync).then(function () {
-      const schema = createSequelizeGraphqlSchema(app.get('sequelize'), {
-        queries: function (nodeInterface, resolver) {
-          return options.middlewares.filter(function (m) {
-            return m.getQueries !== undefined;
-          }).reduce(function (queries, m) {
-            return { ...queries, ...m.getQueries({
-                nodeInterface,
-                sequelizeGraphQLObjectTypes,
-                resolver,
-                GraphQL,
-                Sequelize,
-                app
-              }) };
-          }, {});
-        },
-        mutations: function (nodeInterface, attributeFields) {
-          return options.middlewares.filter(function (m) {
-            return m.getMutations !== undefined;
-          }).reduce(function (queries, m) {
-            return {
-              ...queries, ...m.getMutations({
-                nodeInterface,
-                sequelizeGraphQLObjectTypes,
-                attributeFields,
-                GraphQL,
-                Sequelize,
-                app
-              })
-            };
-          }, {});
-        }
+    return Promise.all(options._middlewares.sync).then(function () {
+      options._middlewares.load.forEach(function (fn) {
+        fn();
       });
-
-      app.use(options.graphql.url, graphqlExpress(request => ({
-        schema: schema,
-        context: request
-      })));
-
-      if (options.graphql.browser) {
-        app.use(options.graphql.browser, graphiqlExpress({
-          endpointURL: options.graphql.url,
-        }));
-      }
 
       return new Promise(function (resolve) {
         app.listen(options.app.port, function () {
