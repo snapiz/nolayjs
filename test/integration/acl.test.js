@@ -307,12 +307,14 @@ describe('ACL middleware', function () {
     const query = `
       query GetUserAcl($id: String!) {
         user(id: $id) {
-          id
-          email
-          firstName
-          lastName
-          todos {
-            total
+          node {
+            id
+            email
+            firstName
+            lastName
+            todos {
+              total
+            }
           }
         }
       }
@@ -339,12 +341,14 @@ describe('ACL middleware', function () {
     const query = `
       query GetUserAcl($id: String!) {
         user(id: $id) {
-          id
-          email
-          firstName
-          lastName
-          todos {
-            total
+          node {
+            id
+            email
+            firstName
+            lastName
+            todos {
+              total
+            }
           }
         }
       }
@@ -362,7 +366,7 @@ describe('ACL middleware', function () {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.user).to.not.null;
-      const { id, email, firstName, lastName, todos } = result.data.user;
+      const { id, email, firstName, lastName, todos } = result.data.user.node;
       expect(unbase64(id)).to.be.eq("User:1");
       expect(email).to.be.eq("user1@gmail.com");
       expect(firstName).to.be.eq("firstName1");
@@ -378,11 +382,13 @@ describe('ACL middleware', function () {
     const query = `
       query GetTodoAcl($id: String!) {
         todo(id: $id) {
-          id
-          text
-          completed
-          owner {
+          node {
             id
+            text
+            completed
+            owner {
+              id
+            }
           }
         }
       }
@@ -410,11 +416,13 @@ describe('ACL middleware', function () {
     const query = `
       query GetTodoAcl($id: String!) {
         todo(id: $id) {
-          id
-          text
-          completed
-          owner {
+          node {
             id
+            text
+            completed
+            owner {
+              id
+            }
           }
         }
       }
@@ -442,11 +450,13 @@ describe('ACL middleware', function () {
     const query = `
       query GetTodoAcl($id: String!) {
         todo(id: $id) {
-          id
-          text
-          completed
-          owner {
+          node {
             id
+            text
+            completed
+            owner {
+              id
+            }
           }
         }
       }
@@ -465,7 +475,7 @@ describe('ACL middleware', function () {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.todo).to.not.null;
-      const { id, text, completed, owner } = result.data.todo;
+      const { id, text, completed, owner } = result.data.todo.node;
       expect(unbase64(id)).to.be.eq("Todo:1");
       expect(text).to.be.eq("User has to be great");
       expect(completed).to.be.eq(true);
@@ -497,7 +507,7 @@ describe('ACL middleware', function () {
       input: {
         text: "Alibaba",
         completed: false,
-        owner_id: /* base64("User:1") */3
+        owner_id:  base64("User:3")
       }
     };
 
@@ -536,7 +546,7 @@ describe('ACL middleware', function () {
       input: {
         text: "Alibaba",
         completed: false,
-        owner_id: /* base64("User:1") */3
+        owner_id:  base64("User:3")
       }
     };
 
