@@ -1,7 +1,6 @@
 import nolayjs from "../../src";
 
 const app = nolayjs({
-  middlewares: [],
   graphql: {
     url: "/graphql",
     browser: false
@@ -35,7 +34,12 @@ const app = nolayjs({
         },
         options: {
           underscored: true,
-          tableName: "users"
+          tableName: "users",
+          graphql: {
+            find: {
+              exclude: ["isAdmin"]
+            }
+          }
         },
         associations: [{
           type: "hasMany",
@@ -113,8 +117,5 @@ const app = nolayjs({
     }
   }
 });
-/* const { _middlewares: { load } } = app.get('options');
-load.push(function () {
-  
-}); */
+
 export default app;

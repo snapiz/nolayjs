@@ -6,7 +6,7 @@ import app from "../data/app";
 
 describe('User middleware', function () {
   it('should define query', function () {
-    return graphql(app.get('schema'), `
+    return graphql(GraphQLSchema, `
         query {
           viewer {
             id

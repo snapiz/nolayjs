@@ -35,7 +35,7 @@ describe('ACL middleware', function () {
     const context = {
       usercreate: true
     };
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.createUser).to.be.null;
@@ -76,7 +76,7 @@ describe('ACL middleware', function () {
       usercreate: false
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.createUser).to.not.null;
@@ -122,7 +122,7 @@ describe('ACL middleware', function () {
       userupdate: true
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.updateUser).to.be.null;
@@ -162,7 +162,7 @@ describe('ACL middleware', function () {
       userupdate: false
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.updateUser).to.not.null;
@@ -208,7 +208,7 @@ describe('ACL middleware', function () {
       userdelete2: true
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.deleteUser).to.be.null;
@@ -247,7 +247,7 @@ describe('ACL middleware', function () {
       userdelete2: true
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.deleteUser).to.be.null;
@@ -287,7 +287,7 @@ describe('ACL middleware', function () {
       userdelete2: false
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.deleteUser).to.not.null;
@@ -327,7 +327,7 @@ describe('ACL middleware', function () {
     const context = {
       userfind1: true
     };
-    return graphql(app.get('schema'), query, {}, context, variables).then(function (result) {
+    return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.user).to.be.null;
@@ -362,7 +362,7 @@ describe('ACL middleware', function () {
       userfind1: false
     };
 
-    return graphql(app.get('schema'), query, {}, context, variables).then(function (result) {
+    return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.user).to.not.null;
@@ -402,7 +402,7 @@ describe('ACL middleware', function () {
       todofind1: true
     };
 
-    return graphql(app.get('schema'), query, {}, context, variables).then(function (result) {
+    return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.todo).to.be.null;
@@ -436,7 +436,7 @@ describe('ACL middleware', function () {
       todofind2: true
     };
 
-    return graphql(app.get('schema'), query, {}, context, variables).then(function (result) {
+    return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.todo).to.be.null;
@@ -471,7 +471,7 @@ describe('ACL middleware', function () {
       todofind2: false
     };
 
-    return graphql(app.get('schema'), query, {}, context, variables).then(function (result) {
+    return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.todo).to.not.null;
@@ -514,7 +514,7 @@ describe('ACL middleware', function () {
     const context = {
       todopolicy1: true
     };
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.createTodo).to.be.null;
@@ -554,7 +554,7 @@ describe('ACL middleware', function () {
       todopolicy1: false
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.createTodo).to.not.null;
@@ -596,7 +596,7 @@ describe('ACL middleware', function () {
       todoAll: true
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.updateTodo).to.be.null;
@@ -633,7 +633,7 @@ describe('ACL middleware', function () {
       todoAll: false
     };
 
-    return graphql(app.get('schema'), mutationQuery, {}, context, mutationVariables).then(function (result) {
+    return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.updateTodo).to.not.null;

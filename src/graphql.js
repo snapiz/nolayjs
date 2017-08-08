@@ -7,35 +7,7 @@ import {
   sequelizeGraphQLObjectTypes
 } from "relay-sequelize";
 
-export const defaultOptions = {
-  _middlewares: {
-    queries: [],
-    mutations: []
-  }
-}
-
-export function configure(app) {
-  const { _middlewares: { queries, mutations, load }, graphql: { url, browser } } = app.get('options');
-  load.push(function () {
-    const schema = createSequelizeGraphqlSchema(app.get('sequelize'), {
-      queries: createQueries(queries),
-      mutations: createMutations(mutations)
-    });
-
-    app.set("schema", schema);
-
-    app.use(url, graphqlExpress(request => ({
-      schema: schema,
-      context: request
-    })));
-
-    if (browser) {
-      app.use(browser, graphiqlExpress({
-        endpointURL: url,
-      }));
-    }
-  });
-}
+import { createViewerQuery } from "./user";
 
 function createQueries(queries) {
   return function (nodeInterface, resolver) {
@@ -68,4 +40,25 @@ function createMutations(mutations) {
       };
     }, {});
   };
+}
+
+export function configureGraphQLServer(app, sequelize, { graphql: { url, browser }, queries, mutations }) {
+  queries.push(createViewerQuery(sequelize.models.User));
+  const schema = createSequelizeGraphqlSchema(sequelize, {
+    queries: createQueries(queries),
+    mutations: createMutations(mutations)
+  });
+
+  app.use(url, graphqlExpress(request => ({
+    schema: schema,
+    context: request
+  })));
+
+  if (browser) {
+    app.use(browser, graphiqlExpress({
+      endpointURL: url,
+    }));
+  }
+
+  return schema;
 }

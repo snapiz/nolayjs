@@ -5,13 +5,12 @@ import compress from "compression";
 import bodyParser from "body-parser";
 import { merge } from "lodash";
 
+import { createSequelize } from "./sequelize";
+import { configureGraphQLServer } from "./graphql";
+import { configureUser } from "./user";
+
 export default function (options) {
   options = merge({
-    middlewares: [],
-    _middlewares: {
-      sync: [],
-      load: []
-    },
     graphql: {
       url: "/graphql",
       browser: false
@@ -25,7 +24,10 @@ export default function (options) {
       sync: {
         force: false
       }
-    }
+    },
+    queries: [],
+    mutations: [],
+    hooks: []
   }, options || {});
 
   const app = express()
@@ -33,39 +35,24 @@ export default function (options) {
     .use(helmet(options.helmet))
     .use(compress(options.compression))
     .use(bodyParser.json())
-    .use(bodyParser.urlencoded({ extended: true }))
-    .set('options', options);
+    .use(bodyParser.urlencoded({ extended: true }));
 
-  options.middlewares = [
-    require("./middlewares/acl"),
-    require("./middlewares/user"),
-    ...options.middlewares,
-    require("./middlewares/sequelize"),
-    require("./middlewares/graphql")
-  ];
+  configureUser(options);
 
-  options.middlewares.forEach(function (middleware) {
-    if(middleware.defaultOptions) {
-      options = merge(options, middleware.defaultOptions);
-    }
+  const sequelize = createSequelize(options);
+
+  app.sync = sequelize.sync(options.sequelize.sync).then(() => {
+    return { sequelize, schema: configureGraphQLServer(app, sequelize, options) };
   });
 
-  options.middlewares.forEach(function (middleware) {
-    middleware.configure(app);
-  });
-
-  app.start = function () {
-    return Promise.all(options._middlewares.sync).then(function () {
-      options._middlewares.load.forEach(function (fn) {
-        fn();
-      });
-
+  app.listen = function () {
+    return app.sync.then(() => {
       return new Promise(function (resolve) {
         app.listen(options.app.port, function () {
           resolve(options.app.port);
         });
       });
-    });
+    })
   }
 
   return app;

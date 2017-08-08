@@ -1,5 +1,5 @@
 fixtures:
-  - model: user
+  - model: User
     data:
       id: 1
       email: user1@gmail.com
@@ -7,51 +7,51 @@ fixtures:
       firstName: "firstName1"
       lastName: "lastName1"
       isAdmin: true
-  - model: user
+  - model: User
     data:
       id: 2
       email: user2@gmail.com
       password: user2user2
       firstName: "firstName2"
       lastName: "lastName2"
-  - model: user
+  - model: User
     data:
       id: 3
       email: user3@gmail.com
       password: user3user3
       firstName: "firstName3"
       lastName: "lastName3"
-  - model: todo
+  - model: Todo
     data:
       id: 1
       text: User has to be great
       completed: true
       owner: 1
-  - model: todo
+  - model: Todo
     data:
       id: 2
       text: Regular plane has a great wing
       completed: false
       owner: 2
-  - model: todo
+  - model: Todo
     data:
       id: 3
       text: My boat has to be very clean before meeting some girl
       completed: false
       owner: 1
-  - model: todo
+  - model: Todo
     data:
       id: 4
       text: Act like everyone in public
       completed: true
       owner: 3
-  - model: todo
+  - model: Todo
     data:
       id: 5
       text: Just be your self with your soulmate
       completed: true
       owner: 3
-  - model: todo
+  - model: Todo
     data:
       id: 6
       text: Everything will be all right
