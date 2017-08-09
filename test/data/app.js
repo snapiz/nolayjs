@@ -40,12 +40,7 @@ const app = nolayjs({
               exclude: ["isAdmin"]
             }
           }
-        },
-        associations: [{
-          type: "hasMany",
-          target: "todo",
-          options: { as: "todos", foreignKey: "owner_id" }
-        }]
+        }
       },
       todo: {
         fields: {
@@ -55,12 +50,7 @@ const app = nolayjs({
         options: {
           underscored: true,
           tableName: "todos"
-        },
-        associations: [{
-          type: "belongsTo",
-          target: "user",
-          options: { as: "owner" }
-        }]
+        }
       }
     }
   },

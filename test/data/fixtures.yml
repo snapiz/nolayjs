@@ -26,34 +26,34 @@ fixtures:
       id: 1
       text: User has to be great
       completed: true
-      owner: 1
+      createdBy: 1
   - model: Todo
     data:
       id: 2
       text: Regular plane has a great wing
       completed: false
-      owner: 2
+      createdBy: 2
   - model: Todo
     data:
       id: 3
       text: My boat has to be very clean before meeting some girl
       completed: false
-      owner: 1
+      createdBy: 1
   - model: Todo
     data:
       id: 4
       text: Act like everyone in public
       completed: true
-      owner: 3
+      createdBy: 3
   - model: Todo
     data:
       id: 5
       text: Just be your self with your soulmate
       completed: true
-      owner: 3
+      createdBy: 3
   - model: Todo
     data:
       id: 6
       text: Everything will be all right
       completed: false
-      owner: 1
+      createdBy: 1

@@ -5,6 +5,6 @@ export default {
     }
   },
   options: {},
-  associations: [{target: "todo", type: "hasMany", options: {as: "lolo"}}],
+  associations: [],
   graphql: {}
 }

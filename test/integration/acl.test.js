@@ -5,6 +5,13 @@ const { unbase64, base64 } = require('relay-sequelize/lib/utils/base64');
 import app from "../data/app";
 
 describe('ACL middleware', function () {
+  const user = {
+    _dataValues: {
+      id: 3
+    },
+    get: (k) => {return user._dataValues[k]}
+  };
+  
   it('should raise acl user create', function () {
     const mutationQuery = `
       mutation CreateUserAcl($input: createUserInput!) {
@@ -386,7 +393,7 @@ describe('ACL middleware', function () {
             id
             text
             completed
-            owner {
+            createdBy {
               id
             }
           }
@@ -420,7 +427,7 @@ describe('ACL middleware', function () {
             id
             text
             completed
-            owner {
+            createdBy {
               id
             }
           }
@@ -454,7 +461,7 @@ describe('ACL middleware', function () {
             id
             text
             completed
-            owner {
+            createdBy {
               id
             }
           }
@@ -475,12 +482,12 @@ describe('ACL middleware', function () {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.todo).to.not.null;
-      const { id, text, completed, owner } = result.data.todo.node;
+      const { id, text, completed, createdBy } = result.data.todo.node;
       expect(unbase64(id)).to.be.eq("Todo:1");
       expect(text).to.be.eq("User has to be great");
       expect(completed).to.be.eq(true);
-      expect(owner).to.not.undefined;
-      expect(unbase64(owner.id)).to.be.eq("User:1");
+      expect(createdBy).to.not.undefined;
+      expect(unbase64(createdBy.id)).to.be.eq("User:1");
 
       return true;
     })
@@ -494,7 +501,7 @@ describe('ACL middleware', function () {
               id
               text
               completed
-              owner {
+              createdBy {
                 id
               }
             }
@@ -506,13 +513,13 @@ describe('ACL middleware', function () {
     const mutationVariables = {
       input: {
         text: "Alibaba",
-        completed: false,
-        owner_id:  base64("User:3")
+        completed: false
       }
     };
 
     const context = {
-      todopolicy1: true
+      todopolicy1: true,
+      user: user
     };
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
@@ -533,7 +540,7 @@ describe('ACL middleware', function () {
               id
               text
               completed
-              owner {
+              createdBy {
                 id
               }
             }
@@ -545,25 +552,25 @@ describe('ACL middleware', function () {
     const mutationVariables = {
       input: {
         text: "Alibaba",
-        completed: false,
-        owner_id:  base64("User:3")
+        completed: false
       }
     };
 
     const context = {
-      todopolicy1: false
+      todopolicy1: false,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
       expect(result.data).to.not.undefined;
       expect(result.data.createTodo).to.not.null;
-      const { id, text, completed, owner } = result.data.createTodo.todoEdge.node;
+      const { id, text, completed, createdBy } = result.data.createTodo.todoEdge.node;
       expect(unbase64(id)).to.be.eq("Todo:7");
       expect(text).to.be.eq("Alibaba");
       expect(completed).to.be.eq(false);
-      expect(owner).to.not.undefined;
-      expect(unbase64(owner.id)).to.be.eq("User:3");
+      expect(createdBy).to.not.undefined;
+      expect(unbase64(createdBy.id)).to.be.eq("User:3");
       expect(result.errors).to.undefined;
 
       return true;
@@ -593,7 +600,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      todoAll: true
+      todoAll: true,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
@@ -630,7 +638,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      todoAll: false
+      todoAll: false,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {

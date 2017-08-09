@@ -43,7 +43,8 @@ function createMutations(mutations) {
 }
 
 export function configureGraphQLServer(app, sequelize, { graphql: { url, browser }, queries, mutations }) {
-  queries.push(createViewerQuery(sequelize.models.User));
+  queries.push(createViewerQuery());
+  
   const schema = createSequelizeGraphqlSchema(sequelize, {
     queries: createQueries(queries),
     mutations: createMutations(mutations)
