@@ -53,7 +53,12 @@ export function createViewerQuery() {
       viewer: {
         type: User,
         resolve: function (obj, args, context, info) {
-          args.id = 1;
+          if(!context.user) {
+            return null;
+          }
+
+          args.id = context.user.get("id");
+
           return resolver(DB.User)(obj, args, context, info);
         }
       }

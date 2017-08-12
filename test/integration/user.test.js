@@ -11,7 +11,7 @@ describe('User', function () {
     },
     get: (k) => {return user._dataValues[k]}
   };
-  it('should define query', function () {
+  it('should query viewer', function () {
     return graphql(GraphQLSchema, `
         query {
           viewer {
@@ -32,7 +32,7 @@ describe('User', function () {
             }
           }
         }
-      `).then(function (result) {
+      `, {}, {user: user}).then(function (result) {
         expect(result).to.not.undefined;
         expect(result.data.viewer).to.not.null;
 
