@@ -1,8 +1,15 @@
 import { mergeWith, isArray, camelCase } from "lodash";
 import userModel from "./models/user";
+import { hasRoles } from "./../role";
 
-export function configureUser({ sequelize: { models } }) {
+export function configureUser({ policies, acl, sequelize: { models } }) {
+  policies.isOwner = isOwner;
+  policies.isAuthenticated = isAuthenticated;
+
+  userModel.options.graphql.before = policies.isAdmin;
+
   models.user = mergeWith(userModel, models.user || {}, customizer);
+
   Object.keys(models).forEach((name) => {
     const cname = camelCase(name);
 
@@ -26,6 +33,18 @@ export function configureUser({ sequelize: { models } }) {
       options: { as: "createdBy", foreignKey: "user_id" }
     })
   });
+}
+
+function isOwner(args, context, info, source) {
+  if (!context.user || !hasRoles(context.user, "admin") || context.user.get("id") !== source.get("user_id")) {
+    throw new Error("You not allow to perform this action");
+  }
+}
+
+function isAuthenticated(args, context, info) {
+  if (!context.user) {
+    throw new Error("You must be authenticate to perform this action");
+  }
 }
 
 export function createViewerQuery() {
@@ -60,28 +79,25 @@ export function createUserAssociations({ fields, options, associations }) {
 
 export function createUserHooks(name) {
   return [{
+    model: name, type: "find", before: (args, context, info) => {
+      isAuthenticated(args, context, info);
+      if(!hasRoles(context.user, "admin")) {
+        args.user_id = context.user.get("id");
+      }
+    }
+  }, {
     model: name, type: "create", before: (args, context, info) => {
-      if (!context.user) {
-        throw new Error(`You must be login to create ${name}`);
-      }
+      isAuthenticated(args, context, info);
 
       args.user_id = context.user.get("id");
     }
-  },{
-    model: name, type: "update", before: (args, context, info) => {
-      if (!context.user) {
-        throw new Error(`You must be login to create ${name}`);
-      }
-
-      args.user_id = context.user.get("id");
+  }, {
+    model: name, type: "update", before: (args, context, info, source) => {
+      isOwner(args, context, info, source);
     }
-  },{
-    model: name, type: "delete", before: (args, context, info) => {
-      if (!context.user) {
-        throw new Error(`You must be login to create ${name}`);
-      }
-
-      args.user_id = context.user.get("id");
+  }, {
+    model: name, type: "delete", before: (args, context, info, source) => {
+      isOwner(args, context, info, source);
     }
   }];
 }

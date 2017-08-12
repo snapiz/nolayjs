@@ -4,10 +4,18 @@ const { unbase64, base64 } = require('relay-sequelize/lib/utils/base64');
 
 import app from "../data/app";
 
-describe('ACL middleware', function () {
+describe('ACL', function () {
   const user = {
     _dataValues: {
-      id: 3
+      id: 3,
+      roles: {admin: true}
+    },
+    get: (k) => {return user._dataValues[k]}
+  };
+
+  const user2 = {
+    _dataValues: {
+      id: 1
     },
     get: (k) => {return user._dataValues[k]}
   };
@@ -40,7 +48,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      usercreate: true
+      usercreate: true,
+      user: user
     };
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
       expect(result).to.not.undefined;
@@ -80,7 +89,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      usercreate: false
+      usercreate: false,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
@@ -126,7 +136,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      userupdate: true
+      userupdate: true,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
@@ -166,7 +177,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      userupdate: false
+      userupdate: false,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
@@ -212,7 +224,8 @@ describe('ACL middleware', function () {
 
     const context = {
       userdelete1: true,
-      userdelete2: true
+      userdelete2: true,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
@@ -251,7 +264,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      userdelete2: true
+      userdelete2: true,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
@@ -291,7 +305,8 @@ describe('ACL middleware', function () {
 
     const context = {
       userdelete1: false,
-      userdelete2: false
+      userdelete2: false,
+      user: user
     };
 
     return graphql(GraphQLSchema, mutationQuery, {}, context, mutationVariables).then(function (result) {
@@ -332,7 +347,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      userfind1: true
+      userfind1: true,
+      user: user
     };
     return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {
       expect(result).to.not.undefined;
@@ -366,7 +382,8 @@ describe('ACL middleware', function () {
     };
 
     const context = {
-      userfind1: false
+      userfind1: false,
+      user: user
     };
 
     return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {
@@ -453,7 +470,7 @@ describe('ACL middleware', function () {
       return true;
     })
   })
-  it('should not raise acl todo create', function () {
+  it('should rnot find todo', function () {
     const query = `
       query GetTodoAcl($id: String!) {
         todo(id: $id) {
@@ -476,6 +493,40 @@ describe('ACL middleware', function () {
     const context = {
       todofind1: false,
       todofind2: false
+    };
+
+    return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {
+      expect(result).to.not.undefined;
+      expect(result.data).to.not.undefined;
+      expect(result.data.todo).to.null;
+
+      return true;
+    })
+  })
+  it('should not raise acl todo create', function () {
+    const query = `
+      query GetTodoAcl($id: String!) {
+        todo(id: $id) {
+          node {
+            id
+            text
+            completed
+            createdBy {
+              id
+            }
+          }
+        }
+      }
+    `;
+
+    const variables = {
+      id: base64("Todo:1")
+    };
+
+    const context = {
+      todofind1: false,
+      todofind2: false,
+      user: user2
     };
 
     return graphql(GraphQLSchema, query, {}, context, variables).then(function (result) {

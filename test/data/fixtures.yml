@@ -6,7 +6,10 @@ fixtures:
       password: user1user1
       firstName: "firstName1"
       lastName: "lastName1"
-      isAdmin: true
+      roles:
+        admin: true
+        read_todo: true
+        write_todo: true
   - model: User
     data:
       id: 2

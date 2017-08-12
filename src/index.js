@@ -8,6 +8,7 @@ import { merge } from "lodash";
 import { createSequelize } from "./sequelize";
 import { configureGraphQLServer } from "./graphql";
 import { configureUser } from "./user";
+import { configureRole } from "./role";
 
 export default function (options) {
   options = merge({
@@ -27,7 +28,8 @@ export default function (options) {
     },
     queries: [],
     mutations: [],
-    hooks: []
+    hooks: [],
+    policies: {}
   }, options || {});
 
   const app = express()
@@ -37,6 +39,7 @@ export default function (options) {
     .use(bodyParser.json())
     .use(bodyParser.urlencoded({ extended: true }));
 
+  configureRole(options);
   configureUser(options);
 
   const sequelize = createSequelize(options);

@@ -25,12 +25,7 @@ const app = nolayjs({
             field: "last_name"
           },
           email: "string",
-          password: "string",
-          isAdmin: {
-            type: "boolean",
-            field: "is_admin",
-            defaultValue: false
-          }
+          password: "string"
         },
         options: {
           underscored: true,

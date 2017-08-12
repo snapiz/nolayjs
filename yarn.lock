@@ -2310,9 +2310,9 @@ regjsparser@^0.1.4:
   dependencies:
     jsesc "~0.5.0"
 
-relay-sequelize@^1.1.7:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/relay-sequelize/-/relay-sequelize-1.1.7.tgz#f18fbb5494411df711cf6ea5418c13b2fe23134c"
+relay-sequelize@^1.1.8:
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/relay-sequelize/-/relay-sequelize-1.1.8.tgz#abd6a4ea2eef6f031a18836d8f5eb98fc7485a6f"
   dependencies:
     graphql "^0.10.3"
     graphql-relay "^0.5.2"
