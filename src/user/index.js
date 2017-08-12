@@ -77,11 +77,16 @@ export function createUserAssociations({ fields, options, associations }) {
   return { fields, options, associations };
 }
 
-export function createUserHooks(name) {
+export function createUserHooks(name, { options: { graphql } }) {
   return [{
     model: name, type: "find", before: (args, context, info) => {
+      if (graphql && graphql.anonyme) {
+        return;
+      }
+
       isAuthenticated(args, context, info);
-      if(!hasRoles(context.user, "admin")) {
+
+      if (!hasRoles(context.user, "admin")) {
         args.user_id = context.user.get("id");
       }
     }

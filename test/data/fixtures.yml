@@ -60,3 +60,23 @@ fixtures:
       text: Everything will be all right
       completed: false
       createdBy: 1
+  - model: Article
+    data:
+      id: 1
+      title: article 1
+      content: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
+      visibility: false
+      createdBy: 1
+  - model: Article
+    data:
+      id: 2
+      title: article 2
+      content: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
+      visibility: true
+      createdBy: 1
+  - model: Article
+    data:
+      id: 3
+      title: article 3
+      content: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
+      createdBy: 1

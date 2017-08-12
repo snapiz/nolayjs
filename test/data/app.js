@@ -46,6 +46,23 @@ const app = nolayjs({
           underscored: true,
           tableName: "todos"
         }
+      },
+      article: {
+        fields: {
+          title: "string",
+          content: "text",
+          visibility: {
+            type: "boolean",
+            defaultValue: true
+          }
+        },
+        options: {
+          underscored: true,
+          tableName: "articles",
+          graphql: {
+            anonyme: true
+          }
+        }
       }
     }
   },

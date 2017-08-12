@@ -31,7 +31,7 @@ export function createSequelize({ sequelize: { database, models }, hooks, acl, p
     mhook.push.apply(mhook, createAclModelHooks(cname, acl, policies));
 
     if (cname !== "user") {
-      mhook.push.apply(mhook, createUserHooks(cname));
+      mhook.push.apply(mhook, createUserHooks(cname, models[name]));
       models[name].options = createUserExcludeFields(models[name].options);
     }
 

@@ -707,4 +707,33 @@ describe('ACL', function () {
       return true;
     })
   }) 
+  it('should not raise acl todo create', function () {
+    const query = `
+      query {
+        articles {
+          id
+          content
+          visibility
+          createdBy {
+            id
+          }
+        }
+      }
+    `;
+
+    return graphql(GraphQLSchema, query, {}, {}).then(function (result) {
+      expect(result).to.not.undefined;
+      expect(result.data).to.not.undefined;
+      expect(result.data.articles).to.not.null;
+
+      const { id, content, visibility, createdBy } = result.data.articles[0];
+      expect(unbase64(id)).to.be.eq("Article:1");
+      expect(content).to.be.eq("Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...");
+      expect(visibility).to.be.eq(false);
+      expect(createdBy).to.not.undefined;
+      expect(unbase64(createdBy.id)).to.be.eq("User:1");
+
+      return true;
+    })
+  })
 })
