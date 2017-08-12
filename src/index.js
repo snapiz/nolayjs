@@ -12,6 +12,7 @@ import { configureRole } from "./role";
 
 export default function (options) {
   options = merge({
+    app: {port: 1337},
     graphql: {
       url: "/graphql",
       browser: false
@@ -48,7 +49,7 @@ export default function (options) {
     return { sequelize, schema: configureGraphQLServer(app, sequelize, options) };
   });
 
-  app.listen = function () {
+  app.run = function () {
     return app.sync.then(() => {
       return new Promise(function (resolve) {
         app.listen(options.app.port, function () {

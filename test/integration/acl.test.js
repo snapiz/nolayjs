@@ -17,7 +17,7 @@ describe('ACL', function () {
     _dataValues: {
       id: 1
     },
-    get: (k) => {return user._dataValues[k]}
+    get: (k) => {return user2._dataValues[k]}
   };
   
   it('should raise acl user create', function () {

@@ -4,12 +4,18 @@ import {
   createSequelizeGraphqlSchema,
   graphqlExpress,
   graphiqlExpress,
-  sequelizeGraphQLObjectTypes
+  sequelizeGraphQLObjectTypes,
+  graphqlEdgeTypes
 } from "relay-sequelize";
+import { 
+  argsToSequelize,
+  resolveEdge
+ } from "relay-sequelize";
 
 import { createViewerQuery } from "./user";
+import { createRoleMutations } from "./role";
 
-function createQueries(queries) {
+function createQueries(sequelize, queries) {
   return function (nodeInterface, resolver) {
     return queries.reduce(function (data, q) {
       return {
@@ -19,14 +25,17 @@ function createQueries(queries) {
           sequelizeGraphQLObjectTypes,
           resolver,
           GraphQL,
-          Sequelize
+          sequelize,
+          argsToSequelize,
+          resolveEdge,
+          graphqlEdgeTypes
         })
       };
     }, {});
   };
 }
 
-function createMutations(mutations) {
+function createMutations(sequelize, mutations) {
   return function (nodeInterface, attributeFields) {
     return mutations.reduce(function (data, m) {
       return {
@@ -35,7 +44,10 @@ function createMutations(mutations) {
           sequelizeGraphQLObjectTypes,
           attributeFields,
           GraphQL,
-          Sequelize
+          sequelize,
+          argsToSequelize,
+          resolveEdge,
+          graphqlEdgeTypes
         })
       };
     }, {});
@@ -44,10 +56,11 @@ function createMutations(mutations) {
 
 export function configureGraphQLServer(app, sequelize, { graphql: { url, browser }, queries, mutations }) {
   queries.push(createViewerQuery());
+  mutations.push(createRoleMutations());
   
   const schema = createSequelizeGraphqlSchema(sequelize, {
-    queries: createQueries(queries),
-    mutations: createMutations(mutations)
+    queries: createQueries(sequelize, queries),
+    mutations: createMutations(sequelize, mutations)
   });
 
   app.use(url, graphqlExpress(request => ({
