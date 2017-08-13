@@ -2,6 +2,7 @@ fixtures:
   - model: User
     data:
       id: 1
+      username: user1
       email: user1@gmail.com
       password: user1user1
       firstName: "firstName1"

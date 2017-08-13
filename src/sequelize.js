@@ -16,7 +16,9 @@ export function createSequelize({ sequelize: { database, models }, hooks, acl, p
     const {
       fields,
       options,
-      associations
+      associations,
+      instanceMethods,
+      classMethods
     } = models[name];
 
     const sfields = fields ? Object.keys(fields).reduce(function (data, f) {
@@ -37,6 +39,18 @@ export function createSequelize({ sequelize: { database, models }, hooks, acl, p
 
     models[name].options = merge(models[name].options || {}, { graphql: createModelHook(mhook) });
     global.DB[uname] = sequelizeModels[name] = sequelize.define(uname, sfields, options);
+
+    if(instanceMethods) {
+      Object.keys(instanceMethods).forEach((m) => {
+        global.DB[uname].prototype[m] = instanceMethods[m];
+      });
+    }
+
+    if(classMethods) {
+      Object.keys(classMethods).forEach((m) => {
+        global.DB[uname][m] = classMethods[m];
+      });
+    }
 
     if (associations) {
       const callbacks = associations.map((association) => {

@@ -7,10 +7,10 @@ import {
   sequelizeGraphQLObjectTypes,
   graphqlEdgeTypes
 } from "relay-sequelize";
-import { 
+import {
   argsToSequelize,
   resolveEdge
- } from "relay-sequelize";
+} from "relay-sequelize";
 
 import { createViewerQuery } from "./user";
 import { createRoleMutations } from "./role";
@@ -57,16 +57,20 @@ function createMutations(sequelize, mutations) {
 export function configureGraphQLServer(app, sequelize, { graphql: { url, browser }, queries, mutations }) {
   queries.push(createViewerQuery());
   mutations.push(createRoleMutations());
-  
+
   const schema = createSequelizeGraphqlSchema(sequelize, {
     queries: createQueries(sequelize, queries),
     mutations: createMutations(sequelize, mutations)
   });
 
-  app.use(url, graphqlExpress(request => ({
-    schema: schema,
-    context: request
-  })));
+  app.use(url, graphqlExpress((context) => {
+    let obj = { schema, context };
+    return obj.context.user ? DB.User.findById(obj.context.user.id).then((user) => {
+      obj.context.user = user;
+
+      return obj;
+    }) : obj;
+  }));
 
   if (browser) {
     app.use(browser, graphiqlExpress({

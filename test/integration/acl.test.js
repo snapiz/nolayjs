@@ -42,6 +42,7 @@ describe('ACL', function () {
     const mutationVariables = {
       input: {
         email: "acl1@gmail.com",
+        password: "azerty",
         firstName: "firtname acl 1",
         lastName: "lastname acl 1"
       }
@@ -83,6 +84,7 @@ describe('ACL', function () {
     const mutationVariables = {
       input: {
         email: "acl1@gmail.com",
+        password: "azerty",
         firstName: "firtname acl 1",
         lastName: "lastname acl 1"
       }

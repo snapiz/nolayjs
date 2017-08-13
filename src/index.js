@@ -4,15 +4,23 @@ import helmet from "helmet";
 import compress from "compression";
 import bodyParser from "body-parser";
 import { merge } from "lodash";
-
+import expressJwt from 'express-jwt';
 import { createSequelize } from "./sequelize";
 import { configureGraphQLServer } from "./graphql";
 import { configureUser } from "./user";
 import { configureRole } from "./role";
+import { bearToken, passport, createLoginResponse } from "./authentication";
 
 export default function (options) {
   options = merge({
-    app: {port: 1337},
+    app: {
+      port: 1337
+    },
+    passport: {
+      secret: "Your secret key",
+      fields: ["roles"],
+      expiresIn: "7d"
+    },
     graphql: {
       url: "/graphql",
       browser: false
@@ -38,7 +46,18 @@ export default function (options) {
     .use(helmet(options.helmet))
     .use(compress(options.compression))
     .use(bodyParser.json())
-    .use(bodyParser.urlencoded({ extended: true }));
+    .use(bodyParser.urlencoded({ extended: true }))
+    .use(bearToken(options.bearToken))
+    .use(expressJwt({
+      secret: options.passport.secret,
+      credentialsRequired: false,
+      getToken: req => req.token,
+    }))
+    .use(passport.initialize());
+
+  app.post('/auth/local', passport.authenticate('local', { session: false }), function (req, res) {
+    res.json(createLoginResponse(req.user, options));
+  });
 
   configureRole(options);
   configureUser(options);

@@ -23,9 +23,7 @@ const app = nolayjs({
           lastName: {
             type: "string",
             field: "last_name"
-          },
-          email: "string",
-          password: "string"
+          }
         },
         options: {
           underscored: true,
